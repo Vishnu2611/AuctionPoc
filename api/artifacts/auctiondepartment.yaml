@@ -1,0 +1,19 @@
+---
+name: "auction-auctiondepartment"
+
+x-type: "hlfv1"
+
+description: "Auction Management Network - client definition for auctiondepartment"
+
+version: "1.0"
+
+client:
+  organization: Auctiondepartment
+
+  credentialStore:
+    path: "./fabric-client-kv-auctiondepartment"
+
+    cryptoStore:
+      path: "/tmp/fabric-client-kv-auctiondepartment"
+
+    wallet: wallet-name

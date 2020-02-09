@@ -1,0 +1,181 @@
+---
+name: "auction"
+
+x-type: "hlfv1"
+
+description: "Auction Network"
+
+version: "1.0"
+
+channels:
+  auctionchannel:
+    orderers:
+      - orderer.auction.com
+    peers:
+      peer0.auditor.auction.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.auditor.auction.com:
+        endorsingPeer: false
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: false
+
+      peer0.auctiondepartment.auction.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.auctiondepartment.auction.com:
+        endorsingPeer: false
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: false
+
+      peer0.bidder.auction.com:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+
+      peer1.bidder.auction.com:
+        endorsingPeer: false
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: false
+    chaincodes:
+      - auctioncc:v0
+      - auctionccc:v0
+      - auctioncccc:v0
+      - auctionc:v0
+      - auction:v0
+      - certcc:v0
+
+organizations:
+  Auditor:
+    mspid: AuditorMSP
+
+    peers:
+      - peer0.auditor.auction.com
+      - peer1.auditor.auction.com
+    certificateAuthorities:
+      - ca-auditor
+    adminPrivateKey:
+      path: ../crypto-config/peerOrganizations/auditor.auction.com/users/Admin@auditor.auction.com/msp/keystore/a31ff32a13363d144e791f42a63ae1c71a87f9e8e2aefef17f0e537d1ab0abd2_sk
+    signedCert:
+      path: ../crypto-config/peerOrganizations/auditor.auction.com/users/Admin@auditor.auction.com/msp/signcerts/Admin@auditor.auction.com-cert.pem
+
+  Auctiondepartment:
+    mspid: AuctiondepartmentMSP
+    peers:
+      - peer0.auctiondepartment.auction.com
+      - peer1.auctiondepartment.auction.com
+    certificateAuthorities:
+      - ca-auctiondepartment
+    adminPrivateKey:
+      path: ../crypto-config/peerOrganizations/auctiondepartment.auction.com/users/Admin@auctiondepartment.auction.com/msp/keystore/36528c31cdde12df77f4a65d0b29d9f3198ce60807b9f0a59f0853997f679fa5_sk
+    signedCert:
+      path: ../crypto-config/peerOrganizations/auctiondepartment.auction.com/users/Admin@auctiondepartment.auction.com/msp/signcerts/Admin@auctiondepartment.auction.com-cert.pem
+
+  Bidder:
+    mspid: BidderMSP
+    peers:
+      - peer0.bidder.auction.com
+      - peer1.bidder.auction.com
+    certificateAuthorities:
+      - ca-bidder
+    adminPrivateKey:
+      path: ../crypto-config/peerOrganizations/bidder.auction.com/users/Admin@bidder.auction.com/msp/keystore/80d3561898820deb7b40940bd5292cc4c1b4fcc61e8509e536f483a2258a8739_sk
+    signedCert:
+      path: ../crypto-config/peerOrganizations/bidder.auction.com/users/Admin@bidder.auction.com/msp/signcerts/Admin@bidder.auction.com-cert.pem
+
+orderers:
+  orderer.auction.com:
+    url: grpcs://localhost:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.auction.com
+    tlsCACerts:
+      path: ../crypto-config/ordererOrganizations/auction.com/orderers/orderer.auction.com/tls/ca.crt
+
+peers:
+  peer0.auditor.auction.com:
+    url: grpcs://localhost:7051
+
+    grpcOptions:
+      ssl-target-name-override: peer0.auditor.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/tls/ca.crt
+
+  peer1.auditor.auction.com:
+    url: grpcs://localhost:8051
+    grpcOptions:
+      ssl-target-name-override: peer1.auditor.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer1.auditor.auction.com/tls/ca.crt
+
+  peer0.auctiondepartment.auction.com:
+    url: grpcs://localhost:9051
+    grpcOptions:
+      ssl-target-name-override: peer0.auctiondepartment.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer0.auctiondepartment.auction.com/tls/ca.crt
+
+  peer1.auctiondepartment.auction.com:
+    url: grpcs://localhost:10051
+    grpcOptions:
+      ssl-target-name-override: peer1.auctiondepartment.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer1.auctiondepartment.auction.com/tls/ca.crt
+
+  peer0.bidder.auction.com:
+    url: grpcs://localhost:11051
+    grpcOptions:
+      ssl-target-name-override: peer0.bidder.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer0.bidder.auction.com/tls/ca.crt
+
+  peer1.bidder.auction.com:
+    url: grpcs://localhost:12051
+    grpcOptions:
+      ssl-target-name-override: peer1.bidder.auction.com
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer1.bidder.auction.com/tls/ca.crt
+
+certificateAuthorities:
+  ca-auditor:
+    url: https://localhost:7054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ../crypto-config/peerOrganizations/auditor.auction.com/ca/ca.auditor.auction.com-cert.pem
+
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    caName: ca-auditor
+
+  ca-auctiondepartment:
+    url: https://localhost:8054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ../../crypto-config/peerOrganizations/auctiondepartment.auction.com/ca/ca.auctiondepartment.auction.com-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    caName: ca_auctiondepartment
+
+  ca-bidder:
+    url: https://localhost:9054
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: ../../crypto-config/peerOrganizations/bidder.auction.com/ca/ca.bidder.auction.com-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+    caName: ca-bidder

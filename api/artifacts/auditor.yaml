@@ -1,0 +1,19 @@
+---
+name: "auction-auditor"
+
+x-type: "hlfv1"
+
+description: "Auction Management Network - client definition for auditor"
+
+version: "1.0"
+
+client:
+  organization: Auditor
+
+  credentialStore:
+    path: "./fabric-client-kv-auditor"
+
+    cryptoStore:
+      path: "/tmp/fabric-client-kv-auditor"
+
+    wallet: wallet-name

@@ -1,0 +1,19 @@
+---
+name: "auction-bidder"
+
+x-type: "hlfv1"
+
+description: "Auction Management Network - client definition for bidder"
+
+version: "1.0"
+
+client:
+  organization: Bidder
+
+  credentialStore:
+    path: "./fabric-client-kv-bidder"
+
+    cryptoStore:
+      path: "/tmp/fabric-client-kv-bidder"
+
+    wallet: wallet-name

@@ -1,0 +1,278 @@
+version: '2'
+
+volumes:
+  orderer.auction.com:
+  peer0.auditor.auction.com:
+  peer1.auditor.auction.com:
+  peer0.auctiondepartment.auction.com:
+  peer1.auctiondepartment.auction.com:
+  peer0.bidder.auction.com:
+  peer1.bidder.auction.com:
+  ca.auditor.auction.com:
+  ca.auctiondepartment.auction.com:
+  ca.bidder.auction.com:
+
+networks:
+  auction:
+
+services:
+
+  orderer.auction.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.auction.com
+    container_name: orderer.auction.com
+    networks:
+      - auction
+
+  peer0.auditor.auction.com:
+    container_name: peer0.auditor.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.auditor.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer0.auditorcouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer0.auditorcouchdb
+    networks:
+      - auction
+
+  peer0.auditorcouchdb:
+    container_name: peer0.auditorcouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "5984:5984"
+    networks:
+      - auction
+
+  peer1.auditor.auction.com:
+    container_name: peer1.auditor.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.auditor.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer1.auditorcouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer1.auditorcouchdb
+    networks:
+      - auction
+
+  peer1.auditorcouchdb:
+    container_name: peer1.auditorcouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "6984:5984"
+    networks:
+      - auction
+
+  peer0.auctiondepartment.auction.com:
+    container_name: peer0.auctiondepartment.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.auctiondepartment.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer0.auctiondepartmentcouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer0.auctiondepartmentcouchdb
+    networks:
+      - auction
+
+  peer0.auctiondepartmentcouchdb:
+    container_name: peer0.auctiondepartmentcouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "7984:5984"
+    networks:
+      - auction
+
+  peer1.auctiondepartment.auction.com:
+    container_name: peer1.auctiondepartment.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.auctiondepartment.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer1.auctiondepartmentcouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer1.auctiondepartmentcouchdb
+    networks:
+      - auction
+
+  peer1.auctiondepartmentcouchdb:
+    container_name: peer1.auctiondepartmentcouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "8984:5984"
+    networks:
+      - auction
+
+  peer0.bidder.auction.com:
+    container_name: peer0.bidder.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.bidder.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer0.biddercouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer0.biddercouchdb
+    networks:
+      - auction
+
+  peer0.biddercouchdb:
+    container_name: peer0.biddercouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "9984:5984"
+    networks:
+      - auction
+
+  peer1.bidder.auction.com:
+    container_name: peer1.bidder.auction.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.bidder.auction.com
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=peer1.biddercouchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    depends_on:
+      - peer1.biddercouchdb
+    networks:
+      - auction
+
+  peer1.biddercouchdb:
+    container_name: peer1.biddercouchdb
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "10984:5984"
+    networks:
+      - auction
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - SYS_CHANNEL=$SYS_CHANNEL
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.auditor.auction.com:7051
+      - CORE_PEER_LOCALMSPID=AuditorMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_auction_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/tls/server.key
+      - CORE_PEER_TLS_ROOTauction_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/auditor.auction.com/users/Admin@auditor.auction.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.auction.com
+      - ca.auditor.auction.com
+      - ca.auctiondepartment.auction.com
+      - ca.bidder.auction.com
+      - peer0.auditor.auction.com
+      - peer1.auditor.auction.com
+      - peer0.auctiondepartment.auction.com
+      - peer1.auctiondepartment.auction.com
+      - peer0.bidder.auction.com
+      - peer1.bidder.auction.com
+    networks:
+      - auction
+
+  ca.auditor.auction.com:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-auditor
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.auditor.auction.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/0ad8323146757b092ea95b30d5e6f75c2c2fbc76ba78e108df5866776e637eb5_sk
+      - FABRIC_CA_SERVER_PORT=7054
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.auditor.auction.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/0ad8323146757b092ea95b30d5e6f75c2c2fbc76ba78e108df5866776e637eb5_sk -b admin:adminpw -d'
+    volumes:
+      - ./fabric-ca-server-config.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - ./crypto-config/peerOrganizations/auditor.auction.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerauditor
+    networks:
+      - auction
+
+  ca.auctiondepartment.auction.com:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca_auctiondepartment
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.auctiondepartment.auction.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a3be4ddea110b8502c22ca6e495d0c97b6ffc21e0ea5e607cd3d13adc0cd4bfb_sk
+      - FABRIC_CA_SERVER_PORT=8054
+    ports:
+      - "8054:8054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.auctiondepartment.auction.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a3be4ddea110b8502c22ca6e495d0c97b6ffc21e0ea5e607cd3d13adc0cd4bfb_sk -b admin:adminpw -d'
+    volumes:
+      - ./fabric-ca-server-config.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - ./crypto-config/peerOrganizations/auctiondepartment.auction.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerauctiondepartment
+    networks:
+      - auction
+
+  ca.bidder.auction.com:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-bidder
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bidder.auction.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/958e1a0bf8380604215d05fa79965a1b055793d6f69e204cc550adf9ba207100_sk
+      - FABRIC_CA_SERVER_PORT=9054
+    ports:
+      - "9054:9054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.bidder.auction.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/958e1a0bf8380604215d05fa79965a1b055793d6f69e204cc550adf9ba207100_sk -b admin:adminpw -d'
+    volumes:
+      - ./fabric-ca-server-config.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - ./crypto-config/peerOrganizations/bidder.auction.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerbidder
+    networks:
+      - auction

@@ -1,0 +1,155 @@
+    Organizations:
+        - &OrdererOrg
+            Name: OrdererMSP
+            ID: OrdererMSP
+            MSPDir: crypto-config/ordererOrganizations/auction.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.admin')"
+        - &Org1
+            Name: AuditorMSP
+            ID: AuditorMSP
+            MSPDir: crypto-config/peerOrganizations/auditor.auction.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('AuditorMSP.admin', 'AuditorMSP.peer', 'AuditorMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('AuditorMSP.admin', 'AuditorMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('AuditorMSP.admin')"
+            AnchorPeers:
+                - Host: peer0.auditor.auction.com
+                  Port: 7051
+        - &Org2
+            Name: AuctiondepartmentMSP
+            ID: AuctiondepartmentMSP
+            MSPDir: crypto-config/peerOrganizations/auctiondepartment.auction.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('AuctiondepartmentMSP.admin', 'AuctiondepartmentMSP.peer', 'AuctiondepartmentMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('AuctiondepartmentMSP.admin', 'AuctiondepartmentMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('AuctiondepartmentMSP.admin')"
+            AnchorPeers:
+                - Host: peer0.auctiondepartment.auction.com
+                  Port: 9051
+        - &Org3
+            Name: BidderMSP
+            ID: BidderMSP
+            MSPDir: crypto-config/peerOrganizations/bidder.auction.com/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('BidderMSP.admin', 'BidderMSP.peer', 'BidderMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('BidderMSP.admin', 'BidderMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('BidderMSP.admin')"
+            AnchorPeers:
+                - Host: peer0.bidder.auction.com
+                  Port: 11051
+    Capabilities:
+        Channel: &ChannelCapabilities
+            V1_4_3: true
+            V1_3: false
+            V1_1: false
+        Orderer: &OrdererCapabilities
+            V1_4_2: true
+            V1_1: false
+        Application: &ApplicationCapabilities
+            V1_4_2: true
+            V1_3: false
+            V1_2: false
+            V1_1: false
+    Application: &ApplicationDefaults
+        Organizations:
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+        Capabilities:
+            <<: *ApplicationCapabilities
+    Orderer: &OrdererDefaults
+        OrdererType: solo
+        Addresses:
+            - orderer.auction.com:7050
+        BatchTimeout: 2s
+        BatchSize:
+            MaxMessageCount: 10
+            AbsoluteMaxBytes: 99 MB
+            PreferredMaxBytes: 512 KB
+        Organizations:
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            BlockValidation:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+    Channel: &ChannelDefaults
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+        Capabilities:
+            <<: *ChannelCapabilities
+    Profiles:
+        AuctionGenesis:
+            <<: *ChannelDefaults
+            Orderer:
+                <<: *OrdererDefaults
+                Organizations:
+                    - *OrdererOrg
+                Capabilities:
+                    <<: *OrdererCapabilities
+            Consortiums:
+                SampleConsortium:
+                    Organizations:
+                        - *Org1
+                        - *Org2
+                        - *Org3
+        Auction_Channel:
+            Consortium: SampleConsortium
+            <<: *ChannelDefaults
+            Application:
+                <<: *ApplicationDefaults
+                Organizations:
+                    - *Org1
+                    - *Org2
+                    - *Org3
+                Capabilities:
+                    <<: *ApplicationCapabilities

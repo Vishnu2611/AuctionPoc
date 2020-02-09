@@ -1,0 +1,28 @@
+    OrdererOrgs:
+        - Name: Orderer
+          Domain: auction.com
+          EnableNodeOUs: true
+          Specs:
+            - Hostname: orderer
+    PeerOrgs:
+        - Name: auditor
+          Domain: auditor.auction.com
+          EnableNodeOUs: true
+          Template:
+            Count: 2
+          Users:
+            Count: 1
+        - Name: auctiondepartment
+          Domain: auctiondepartment.auction.com
+          EnableNodeOUs: true
+          Template:
+            Count: 2
+          Users:
+            Count: 1
+        - Name: bidder
+          Domain: bidder.auction.com
+          EnableNodeOUs: true
+          Template:
+            Count: 2
+          Users:
+            Count: 1

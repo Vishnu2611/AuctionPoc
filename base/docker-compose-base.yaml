@@ -1,0 +1,149 @@
+version: '2'
+
+services:
+
+  orderer.auction.com:
+    container_name: orderer.auction.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/auction.com/orderers/orderer.auction.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/auction.com/orderers/orderer.auction.com/tls/:/var/hyperledger/orderer/tls
+        - orderer.auction.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.auditor.auction.com:
+    container_name: peer0.auditor.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.auditor.auction.com
+      - CORE_PEER_ADDRESS=peer0.auditor.auction.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.auditor.auction.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.auditor.auction.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.auditor.auction.com:7051
+      - CORE_PEER_LOCALMSPID=AuditorMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer0.auditor.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.auditor.auction.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer1.auditor.auction.com:
+    container_name: peer1.auditor.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.auditor.auction.com
+      - CORE_PEER_ADDRESS=peer1.auditor.auction.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.auditor.auction.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.auditor.auction.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.auditor.auction.com:8051
+      - CORE_PEER_LOCALMSPID=AuditorMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer1.auditor.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/auditor.auction.com/peers/peer1.auditor.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.auditor.auction.com:/var/hyperledger/production
+    ports:
+      - 8051:8051
+
+  peer0.auctiondepartment.auction.com:
+    container_name: peer0.auctiondepartment.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.auctiondepartment.auction.com
+      - CORE_PEER_ADDRESS=peer0.auctiondepartment.auction.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.auctiondepartment.auction.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.auctiondepartment.auction.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.auctiondepartment.auction.com:10051
+      - CORE_PEER_LOCALMSPID=AuctiondepartmentMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer0.auctiondepartment.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer0.auctiondepartment.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.auctiondepartment.auction.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  peer1.auctiondepartment.auction.com:
+    container_name: peer1.auctiondepartment.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.auctiondepartment.auction.com
+      - CORE_PEER_ADDRESS=peer1.auctiondepartment.auction.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.auctiondepartment.auction.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.auctiondepartment.auction.com:10051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.auctiondepartment.auction.com:9051
+      - CORE_PEER_LOCALMSPID=AuctiondepartmentMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer1.auctiondepartment.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/auctiondepartment.auction.com/peers/peer1.auctiondepartment.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.auctiondepartment.auction.com:/var/hyperledger/production
+    ports:
+      - 10051:10051
+
+  peer0.bidder.auction.com:
+    container_name: peer0.bidder.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.bidder.auction.com
+      - CORE_PEER_ADDRESS=peer0.bidder.auction.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.bidder.auction.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bidder.auction.com:11051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.bidder.auction.com:12051
+      - CORE_PEER_LOCALMSPID=BidderMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer0.bidder.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer0.bidder.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.bidder.auction.com:/var/hyperledger/production
+    ports:
+      - 11051:11051
+
+  peer1.bidder.auction.com:
+    container_name: peer1.bidder.auction.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.bidder.auction.com
+      - CORE_PEER_ADDRESS=peer1.bidder.auction.com:12051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:12051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.bidder.auction.com:12052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:12052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.bidder.auction.com:12051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.bidder.auction.com:11051
+      - CORE_PEER_LOCALMSPID=BidderMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer1.bidder.auction.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/bidder.auction.com/peers/peer1.bidder.auction.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.bidder.auction.com:/var/hyperledger/production
+    ports:
+      - 12051:12051
+
