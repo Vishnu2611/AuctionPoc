@@ -2,6 +2,7 @@ const def = require("../config/config");
 const timer = require("./timer");
 const auction = require('../db/models/auction');
 const mongo = require('mongoose');
+const md5= require("md5");
 
 const db = def.modules.dbUri;
 
@@ -11,7 +12,7 @@ const startAuction = async (body, username, orgname)=> {
         .then(async () => {
             console.log("Database Connected!!");
             const newauction =  new auction({
-                auctionId: (Math.floor(Date.now() / 1000)).toString(),
+                auctionId: md5((Math.floor(Date.now() / 1000)).toString()),
                 auctionName: body.auctionName,
                 items: body.items,
                 basePrice: body.basePrice,
@@ -20,7 +21,7 @@ const startAuction = async (body, username, orgname)=> {
                 owner: username
             });
             newauction.save().then((item) => {
-                timer.check(item.endTime, item.auctionId, username, orgname);
+                timer.check(item.endTime, item.auctionId, username, orgname,true, body);
                 resolve(item);
             }).catch(err => reject(err));
         }).catch((error)=>{reject(error)});
@@ -37,7 +38,7 @@ const serverStart =  () => {
             else{
                 data.forEach(element => {
                     console.log(element.endTime);
-                    timer.check(element.endTime,element.auctionId)
+                    timer.check(element.endTime,element.auctionId,element.owner,"Auctiondepartment",false)
                 });
                 resolve(1);
             }
