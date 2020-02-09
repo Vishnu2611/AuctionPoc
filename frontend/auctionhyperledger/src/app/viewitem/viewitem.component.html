@@ -1,0 +1,36 @@
+<ul nz-menu nzMode="horizontal">
+    <li nz-menu-item nzSelected>
+     Auction Department
+    </li> 
+  </ul>
+
+
+<br>
+<div >
+    <h1>View Item</h1>
+</div>
+<br><br>  
+
+<table class="table align-items-center table-flush">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Auction Id</th>
+      <th scope="col">Base Price</th>
+      <th scope="col">Starting Time</th>
+      <th scope="col">Ending Time</th>
+      <th scope="col">Auction Details</th>
+     
+     
+    </tr>
+  </thead>
+
+<tbody>
+  <tr *ngFor="let details of detailss">
+    <td>{{details.auctionId}}</td>
+    <td>{{details.basePrice}}</td>
+    <td>{{details.startTime}}</td>
+    <td>{{details.endTime}}</td>
+    <td>{{details.auctionDetails}}</td>
+</tr>
+</tbody>
+</table>

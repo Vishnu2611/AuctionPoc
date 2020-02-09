@@ -1,0 +1,23 @@
+<ul nz-menu nzMode="horizontal">
+  <li nz-menu-item nzSelected>
+   Auction Department
+  </li>
+  <li nz-submenu nzTitle="Item" >
+    <ul>
+      <li nz-menu-item routerLinkActive="active" [routerLink]="['/createitem']">Create Item </li>
+      <li nz-menu-item  routerLinkActive="active" [routerLink]="['/viewitem']">View Item</li>
+    </ul>   
+  </li>
+  <li nz-submenu nzTitle="Auction" >
+    <ul>
+      <li nz-menu-item routerLinkActive="active" [routerLink]="['/auctiondepartment']"> Create Auction</li>
+      <li nz-menu-item  routerLinkActive="active" [routerLink]="['/auditor']">View Auction</li>
+    </ul>   
+  </li>
+  <li nz-menu-item nzDisabled>
+    <i nz-icon nzType="appstore"></i>
+    Success Bid
+  </li>
+</ul>
+
+ 

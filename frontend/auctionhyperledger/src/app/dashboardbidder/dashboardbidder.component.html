@@ -1,0 +1,19 @@
+<ul nz-menu nzMode="horizontal">
+    <li nz-menu-item nzSelected>
+    Bidder
+    </li>
+    <li nz-menu-item  routerLinkActive="active" [routerLink]="['/auditor']">View Auction</li>
+
+    <li nz-submenu nzTitle="Bid" >
+      <ul>
+        <li nz-menu-item routerLinkActive="active" [routerLink]="['/createbid']">Create BId </li>
+        <li nz-menu-item  routerLinkActive="active" [routerLink]="['/viewbid']">View Bid</li>
+      </ul>   
+    </li>
+    <li nz-menu-item nzDisabled>
+      <i nz-icon nzType="appstore"></i>
+      Success Bid
+    </li>
+  </ul>
+  
+   

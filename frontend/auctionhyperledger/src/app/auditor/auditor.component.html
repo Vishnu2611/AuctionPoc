@@ -1,0 +1,46 @@
+<!-- <ul nz-menu nzMode="horizontal">
+  <li nz-menu-item nzSelected>
+   Auction
+  </li>
+</ul> -->
+
+<br>
+<div class="form-group">
+  <h1>View Auction</h1>
+</div>
+<br>
+
+
+  <table class="table align-items-center table-flush">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Auction Id</th>
+        <th scope="col">Starting Time</th>
+        <th scope="col">Ending Time</th>
+        <th scope="col">Auction Id</th>
+        <th scope="col">Auction Id</th>
+        <th scope="col">Auction Id</th>
+
+
+       
+       
+      </tr>
+    </thead>
+
+  <tbody>
+    <tr *ngFor="let details of detailss">
+     
+
+      <td>{{details.status}}</td>
+      <td>{{details._id}}</td>
+      <td>{{details.auctionId}}</td>
+
+      <td>{{details.startTime}}</td>
+      <td>{{details.endTime}}</td>
+      <td>{{details._v}}</td>
+
+      
+</tr>
+</tbody>
+</table>
+
