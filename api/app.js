@@ -42,6 +42,7 @@ var invoke = require("./app/invoke-transaction.js");
 var query = require("./app/query.js");
 const user = require("./controller/users");
 const auction = require("./controller/auction");
+const item = require("./controller/item");
 const def = require("./config/config");
 
 var host = process.env.HOST || hfc.getConfigSetting("host");
@@ -65,7 +66,7 @@ app.use(
   expressJWT({
     secret: "thisismysecret"
   }).unless({
-    path: ["/signup", "/login","/certificate/pending","/certificate/approved","/certificate/rejected","/certificate/apply","/channels/:channelName/chaincodes/:chaincodeName","/channels/:channelName/chaincodes/:chaincodeName"]
+    path: ["/signup", "/login"]
   })
 );
 app.use(bearerToken());
@@ -73,17 +74,7 @@ app.use(function(req, res, next) {
   logger.debug(" ------>>>>>> new request for %s", req.originalUrl);
   if (
     req.originalUrl.indexOf("/signup") >= 0 ||
-    req.originalUrl.indexOf("/login") >= 0 ||
-    req.originalUrl.indexOf("/certificate/pending") >= 0 ||
-    req.originalUrl.indexOf("/certificate/approved") >= 0 ||
-    req.originalUrl.indexOf("/certificate/rejected") >= 0 ||
-    req.originalUrl.indexOf("/certificate/apply") >= 0 ||
-    req.originalUrl.indexOf("/channels/:channelName/chaincodes/:chaincodeName") >= 0 ||
-    req.originalUrl.indexOf("/channels/:channelName/chaincodes/:chaincodeName") >= 0
-
-
-
-
+    req.originalUrl.indexOf("/login") >= 0
   ) {
     return next();
   }
@@ -140,8 +131,8 @@ function getErrorMessage(field) {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-//Login appi
 
+//signup
 app.post("/signup", async function(req, res) {
   var username = req.body.email
   var orgName
@@ -327,87 +318,214 @@ app.post("/createAuction",async function(req,res){
   }
 })
 
-// show pending certificats
+app.post("/makeBid",async function(req,res){
 
-app.get("/certificate/pending",async function(req,res){
-  console.log('show pending certificats')
+  logger.debug("End point : /makeBid");
+  logger.debug("auctionId :"+req.body.auctionId);
+  logger.debug("Bid Value :"+req.body.bidValue);
+  logger.debug("owner :"+req.username);
+  logger.debug("usename :"+req.username);
+
+  if(!req.body.auctionId){
+    res.json(getErrorMessage("'Auction Id'"));
+    return;
+  }
+  if(!req.body.bidValue){
+    res.json(getErrorMessage("'Bid Value'"));
+    return;
+  }
   try{
-    const pending= await cert.pendingCert()
-    res.send(pending)
-} catch(e){
-    res.status(500).send()
-}
-});
+    if(req.orgname === "Bidder"){
+      await auction.makeBid(req.body, req.username, req.orgname);
+      let response = {};
+      response.message = "Bid has been made successfully";
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation, Only allowed by bidder !!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
 
-// show approved certificats
-
-app.get("/certificate/approved",async function(req,res){
-  console.log('show approved certificats')
+app.get("/auctionHistory", async function(req,res){
+  logger.debug("End point : /itemHistory");
+  logger.debug("itemName :"+req.query.args);
+  logger.debug("creator :"+req.username);
+  if(!req.query.args){
+    res.json(getErrorMessage("'Args'"));
+    return;
+  }
   try{
-    const approved= await cert.approvedCert()
-    res.send(approved)
-} catch(e){
-    res.status(500).send()
-}
-});
+    if(req.orgname === "Auctiondepartment" || req.orgName === "Auditor") {
+      const result = await auction.auctionHistory(req.query, req.username, req.orgname);
+      let response = {};
+      response.message = "History is recieved successfully";
+      response.result = result;
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation by bidder!!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
 
-// show rejected certificats
-
-app.get("/certificate/rejected",async function(req,res){
-  console.log('show rejected certificats')
+app.get("/viewAuction", async function(req,res){
+  logger.debug("End point : /viewAuction");
+  logger.debug("creator :"+req.username);
   try{
-    const rejected= await cert.rejectedCert()
-    res.send(rejected)
-} catch(e){
-    res.status(500).send()
-}
-});
+    if(req.orgname === "Auctiondepartment" || req.orgname === "Auditor" || req.orgname === "Bidder") {
+      const result = await item.viewItem(req.username, req.orgname);
+      let response = {};
+      response.message = "View is recieved successfully";
+      response.result = result;
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation by bidder!!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
 
-// approve a certificate
 
-app.post("/approveCertificate", async function(
-  req,
-  res
-) {
-  logger.debug("==================== Generate Certificate ==================");
-  var peers = def.modules.endorsingPeers;
-  var chaincodeName = def.modules.chaincodeName;
-  var channelName = def.modules.channelName;
-  var fcn = createCertificate;
-  var args = req.body.args;
-  logger.debug("channelName  : " + channelName);
-  logger.debug("chaincodeName : " + chaincodeName);
-  logger.debug("fcn  : " + fcn);
-  logger.debug("args  : " + args);
-  if (!chaincodeName) {
-    res.json(getErrorMessage("'chaincodeName'"));
+// Create Item
+app.post("/createItem", async function(req,res){
+  logger.debug("End point : /createItem");
+  logger.debug("itemName :"+req.body.itemName);
+  logger.debug("value :"+req.body.value);
+  logger.debug("owner :"+req.body.owner);
+  logger.debug("creator :"+req.username);
+  if(!req.body.itemName){
+    res.json(getErrorMessage("'Item Name'"));
     return;
   }
-  if (!channelName) {
-    res.json(getErrorMessage("'channelName'"));
+  if(!req.body.value){
+    res.json(getErrorMessage("'Value'"));
     return;
   }
-  if (!fcn) {
-    res.json(getErrorMessage("'fcn'"));
+  if(!req.body.owner){
+    res.json(getErrorMessage("'Item Owner'"));
     return;
   }
-  if (!args) {
-    res.json(getErrorMessage("'args'"));
-    return;
+  try{
+    if(req.orgname === "Auctiondepartment"){
+      await item.createItem(req.body, req.username, req.orgname);
+      let response = {};
+      response.message = "Item is Successfully Created";
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation, Only allowed by auctiondepartment employee!!");
   }
-  await cert.approve()
-  let message = await invoke.invokeChaincode(
-    peers,
-    channelName,
-    chaincodeName,
-    fcn,
-    args,
-    req.username,
-    req.orgname
-  );
-  res.send(message);
-});
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
 
+//Change Owner
+app.post("/changeOwner", async function(req,res){
+  logger.debug("End point : /changeOwner");
+  logger.debug("itemName :"+req.body.itemId);
+  logger.debug("owner :"+req.body.owner);
+  logger.debug("creator :"+req.username);
+  if(!req.body.itemId){
+    res.json(getErrorMessage("'Item Name'"));
+    return;
+  }
+  if(!req.body.owner){
+    res.json(getErrorMessage("'New Owner'"));
+    return;
+  }
+  try{
+    if(req.orgname === "Auctiondepartment") {
+      await item.itemChangeOwner(req.body, req.username, req.orgname);
+      let response = {};
+      response.message = "Owner is Successfully Created";
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation, Only allowed by auctiondepartment employee!!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
+
+app.get("/itemHistory", async function(req,res){
+  logger.debug("End point : /itemHistory");
+  logger.debug("itemName :"+req.query.args);
+  logger.debug("creator :"+req.username);
+  if(!req.query.args){
+    res.json(getErrorMessage("'Args'"));
+    return;
+  }
+  try{
+    if(req.orgname === "Auctiondepartment" || req.orgName === "Auditor") {
+      const result = await item.itemHistory(req.query, req.username, req.orgname);
+      let response = {};
+      response.message = "History is recieved successfully";
+      response.result = result;
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation by bidder!!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
+
+app.get("/viewItem", async function(req,res){
+  logger.debug("End point : /viewItem");
+  logger.debug("creator :"+req.username);
+  try{
+    if(req.orgname === "Auctiondepartment" || req.orgname === "Auditor" || req.orgname === "Bidder") {
+      const result = await item.viewItem(req.username, req.orgname);
+      let response = {};
+      response.message = "View is recieved successfully";
+      response.result = result;
+      response.status = "success";
+      return res.json(response);
+    }
+    else
+      throw new Error ("Invalid operation by bidder!!");
+  }
+  catch(error){
+    let response = {};
+    response.message = "Mongo Error" + " " + error;
+    response.status = "failure";
+    return res.json(response);
+  }
+})
 
 app.post("/channels", async function(req, res) {
   logger.info("<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>");
@@ -433,7 +551,6 @@ app.post("/channels", async function(req, res) {
   );
   res.send(message);
 });
-
 
 // Join Channel
 app.post("/channels/:channelName/peers", async function(req, res) {
@@ -524,7 +641,7 @@ app.post("/chaincodes", async function(req, res) {
     chaincodeName,
     chaincodePath,
     chaincodeVersion,
-    chaincodeType,
+    chaincodeType,  
     req.username,
     req.orgname
   );

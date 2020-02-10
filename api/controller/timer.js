@@ -1,5 +1,5 @@
 const def = require("../config/config");
-const invoke =require("../app/invoke-transaction")
+const invoke =require("../app/invoke-transaction");
 const moment = require("moment");
 const mongo = require('mongoose');
 const auction = require('../db/models/auction');
