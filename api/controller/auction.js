@@ -1,5 +1,6 @@
 const def = require("../config/config");
 const invoke =require("../app/invoke-transaction");
+const la = require("../app/query")
 const timer = require("./timer");
 const auction = require('../db/models/auction');
 const mongo = require('mongoose');
@@ -117,7 +118,7 @@ const viewAuctions = async (username, orgname) => {
         var channelName = def.modules.channelName;
         var chaincodeName = def.modules.chaincodeName;
         let args = ["{\"selector\":{\"docType\":\"auction\"}}"];
-        let fcn = "getAuctionHistory";
+        let fcn = "viewItems";
         let peer;
         if(orgname === "Auctiondepartment")
             peer = def.modules.Auctiondepartment;
@@ -125,8 +126,8 @@ const viewAuctions = async (username, orgname) => {
             peer = def.modules.Auditor;
         else
             peer = def.modules.Bidder;
-        args = args.replace(/'/g, '"');
-        args = JSON.parse(args);
+ //       args = args.replace(/'/g, '"');
+//        args = JSON.parse(args);
         let message = await la.queryChaincode(
           peer,
           channelName,

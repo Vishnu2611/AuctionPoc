@@ -17,6 +17,7 @@ class Auction extends Contract {
         let item = {
             itemId,
             name,
+            buildDate: Date(),
             value,
             status: "Active",
             owner,
@@ -60,7 +61,7 @@ class Auction extends Contract {
         }
     }
 
-    async getItemHistory(ctx,id){
+    async getItemHistory(ctx, id){
         try {
             const resultIterator = await ctx.stub.getHistoryForKey(id);
             const items = [];
@@ -93,7 +94,7 @@ class Auction extends Contract {
             item.owner = newowner;
             try {
                 await ctx.stub.putState(
-                    item.id,
+                    item.itemId,
                     Buffer.from(JSON.stringify(item))
                 );
                 console.log("The owner of item is updated");
@@ -218,13 +219,13 @@ class Auction extends Contract {
 
     async makeBid(
         ctx,
+        bidId,
         auctionId,
         bidValue,
         owner,
     ) {
         let bid = {
-            bidId: (Math.floor(Date.now() / 1000)).toString(),
-            auctionId,
+            bidId,
             startTime: Date(),
             bidValue,
             owner,
@@ -239,7 +240,9 @@ class Auction extends Contract {
             console.log(auctionAsBytes.toString());
             let auction = JSON.parse(auctionAsBytes.toString());
             if(auction.status === "Completed")
-                return (JSON.stringify({response:`Auction has ended at ${auction.endTime}!!!`}));
+                throw new Error(`Auction has been completed so bid cannot be placed!!`);
+            else if(auction.basePrice>=bid.bidValue)
+                throw new Error (`Bid is not meeting basepriceof auction!!!`);
             else {
                 if(auction.bid === undefined)
                     auction.bid = bid
@@ -247,7 +250,7 @@ class Auction extends Contract {
                     if(auction.bid.bidValue && auction.bid.bidValue<bidValue)
                         auction.bid = bid;
                     else
-                        return (JSON.stringify({response:`Bid value entered is low please increase your bid, current bidValue is ${auction.bid.bidValue}!!!`}));
+                        throw new Error(`Bid value is lower than the current bid value`);
                 }
             }
             try {

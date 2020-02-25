@@ -113,8 +113,8 @@ const viewItem = async (username, orgname) => {
             peer = def.modules.Auditor;
         else
             peer = def.modules.Bidder;
-        args = args.replace(/'/g, '"');
-        args = JSON.parse(args);
+        // args = args.replace(/'/g, '"');
+        // args = JSON.parse(args);
         let message = await la.queryChaincode(
           peer,
           channelName,

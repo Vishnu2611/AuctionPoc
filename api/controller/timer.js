@@ -21,6 +21,7 @@ const check =  async (time, auctionid, username, orgname, flag, body) => {
     if(response === true){
         console.log(`Auction with auctionId ${auctionid} has ended`);
         try {
+          console.log("One:1")
         const result = await auctioncomplete(auctionid, username, orgname)
         console.log("result:" + result);
       }
@@ -77,6 +78,7 @@ const auctioncomplete =  (auctionId,username,orgname) => {
             username,
             orgname
           );
+          console.log(message);
           resolve(true);
       })
       .catch((error) => console.log("Database connection error!!"+error));

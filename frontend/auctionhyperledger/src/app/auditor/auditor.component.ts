@@ -10,13 +10,13 @@ export class AuditorComponent implements OnInit {
   constructor( private auditorService: AuditorService) { }
   public detailss;
   async details(){
-  
+
     this.auditorService.getDetails().subscribe(res => {
-      this.detailss = res.info;   
+   //   this.detailss = res.info;
       // console.log(res);
       console.log(this.detailss)
 
-     } ); 
+     } );
             }
 
     ngOnInit() {
