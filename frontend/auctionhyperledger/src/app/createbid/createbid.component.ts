@@ -17,12 +17,12 @@ export class CreatebidComponent  {
     if(!form.valid){
       return;
     }
-    const userName = form.value.userName;
-    const auctionId = form.value.auctionId;
-    const bidAmount= form.value.bidAmount;
    
+    const auctionId = form.value.auctionId;
+    const bidValue= form.value.bidValue;
+    const owner = form.value.owner;
 
-    this.createbidService.createbid(userName, auctionId, bidAmount).subscribe(resData=>{
+    this.createbidService.createbid( auctionId, bidValue,owner).subscribe(resData=>{
       console.log(resData);
     
     },

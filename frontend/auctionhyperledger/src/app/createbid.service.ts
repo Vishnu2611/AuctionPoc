@@ -13,14 +13,14 @@ export class CreatebidService {
   constructor(private http: HttpClient) { }
 
 
-  createbid(userName: string, auctionId:string, bidAmount: string) {
+  createbid( auctionId:string, bidValue: string,owner: string,) {
     
     return this.http.post<AuthResponseData>('http://192.168.30.34:4000/login',
        {   
-        userName: userName,
+        
         auctionId:auctionId,
-        bidAmount: bidAmount
-       
+        bidValue: bidValue,
+        owner: owner
       });
     }
 }

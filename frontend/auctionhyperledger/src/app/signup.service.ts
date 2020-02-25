@@ -10,7 +10,7 @@ export class SignupService {
 
   constructor(private http: HttpClient) { }
 
-  signup(userName: string,orgName:string, password: string) {
+  signup(firstName: string,middleName:string, lastName:string,email:string,phoneNumber:string,password: string,role:string) {
 
 
     // const token = localStorage.getItem('token');
@@ -24,9 +24,13 @@ export class SignupService {
     
     return this.http.post<AuthResponseData>('http://localhost:4000/signup',
        {   
-        userName: userName,
-        orgName:orgName,
-        password: password,
+        firstName: firstName,
+        middleName:middleName,
+        lastName: lastName,
+        email:email,
+        phoneNumber:phoneNumber,
+        password:password,
+        role:role
       
       });
 }

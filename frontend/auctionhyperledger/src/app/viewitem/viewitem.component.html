@@ -14,11 +14,10 @@
 <table class="table align-items-center table-flush">
   <thead class="thead-light">
     <tr>
-      <th scope="col">Auction Id</th>
-      <th scope="col">Base Price</th>
-      <th scope="col">Starting Time</th>
-      <th scope="col">Ending Time</th>
-      <th scope="col">Auction Details</th>
+      <th scope="col">Item Id</th>
+      <th scope="col">Name </th>
+      <th scope="col">Value </th>
+      <th scope="col">Owner</th>
      
      
     </tr>
@@ -26,11 +25,10 @@
 
 <tbody>
   <tr *ngFor="let details of detailss">
-    <td>{{details.auctionId}}</td>
-    <td>{{details.basePrice}}</td>
-    <td>{{details.startTime}}</td>
-    <td>{{details.endTime}}</td>
-    <td>{{details.auctionDetails}}</td>
+    <td>{{details.itemId}}</td>
+    <td>{{details.name}}</td>
+    <td>{{details.value}}</td>
+    <td>{{details.owner}}</td>
 </tr>
 </tbody>
 </table>

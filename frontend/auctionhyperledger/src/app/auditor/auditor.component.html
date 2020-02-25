@@ -14,12 +14,12 @@
   <table class="table align-items-center table-flush">
     <thead class="thead-light">
       <tr>
-        <th scope="col">Auction Id</th>
-        <th scope="col">Starting Time</th>
-        <th scope="col">Ending Time</th>
-        <th scope="col">Auction Id</th>
-        <th scope="col">Auction Id</th>
-        <th scope="col">Auction Id</th>
+        <th scope="col">Auction Name </th>
+        <th scope="col">Items </th>
+        <th scope="col">Base Price </th>
+        <th scope="col">User Name </th>
+        <th scope="col">End Time </th>
+        
 
 
        
@@ -31,13 +31,13 @@
     <tr *ngFor="let details of detailss">
      
 
-      <td>{{details.status}}</td>
-      <td>{{details._id}}</td>
-      <td>{{details.auctionId}}</td>
+      <td>{{details.auctionName}}</td>
+      <td>{{details.items}}</td>
+      <td>{{details.basePrice}}</td>
 
-      <td>{{details.startTime}}</td>
+      <td>{{details.username}}</td>
       <td>{{details.endTime}}</td>
-      <td>{{details._v}}</td>
+     
 
       
 </tr>

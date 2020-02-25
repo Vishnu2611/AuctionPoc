@@ -12,11 +12,11 @@ export class LoginService {
   constructor(private http: HttpClient) { }
 
   
-  login(userName: string, password: string) {
+  login(email: string, password: string) {
     
-    return this.http.post<AuthResponseData>('http://localhost:4000/login',
+    return this.http.post<AuthResponseData>('http://192.168.43.222:4000/login',
        {   
-        userName: userName,
+        email: email,
         password: password
       });
 }

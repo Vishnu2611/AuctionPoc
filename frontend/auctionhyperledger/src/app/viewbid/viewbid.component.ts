@@ -8,13 +8,13 @@ import { ViewbidService } from '../viewbid.service';
   templateUrl: './viewbid.component.html',
   styleUrls: ['./viewbid.component.css']
 })
-export class ViewbidComponent  {
+export class ViewbidComponent implements OnInit {
 
   constructor( private viewbidService: ViewbidService) { }
   public detailss;
   async details(){
     
-    this.viewbidService.getDetails().subscribe(res => {this.detailss = res; 
+    this.viewbidService.getDetails().subscribe(res => {this.detailss = res.info; 
     console.log(this.detailss)} ); }
 
     ngOnInit() {
